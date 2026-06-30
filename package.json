@@ -1,0 +1,14 @@
+{
+  "name": "nome-project",
+  "private": true,
+  "scripts": {
+    "setup": "npm ci && npm run open",
+    "serverSetup": "npm ci",
+    "open": "npx cypress open",
+    "cypress": "npx cypress run --quiet"
+  },
+  "dependencies": {
+    "cypress": "^13.17.0",
+    "cypress-file-upload": "^5.0.8"
+  }
+}
