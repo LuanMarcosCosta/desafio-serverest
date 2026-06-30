@@ -103,3 +103,41 @@ Cypress.Commands.add('apiDeletarPeloNome', (userName, token) => {
     });
 });
 
+Cypress.Commands.add('apiDeletarProduto', (productId, token) => {
+    return cy.request({
+        method: 'DELETE',
+        url: `https://serverest.dev/produtos/${productId}`,
+        headers: {
+            accept: 'application/json',
+            Authorization: token,
+        },
+        failOnStatusCode: false,
+    }).then((response) => {
+        expect([200, 204]).to.include(response.status);
+        return response;
+    });
+});
+
+Cypress.Commands.add('apiDeletarProdutoPeloNome', (productName, token) => {
+    return cy.request({
+        method: 'GET',
+        url: `https://serverest.dev/produtos?nome=${encodeURIComponent(productName)}`,
+        headers: {
+            accept: 'application/json',
+        },
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        const products = response.body.produtos || [];
+        if (products.length === 0) {
+            return [];
+        }
+
+        const results = [];
+        return cy.wrap(products).each((p) => {
+            cy.apiDeletarProduto(p._id, token).then((res) => {
+                results.push(res);
+            });
+        }).then(() => results);
+    });
+});
+
