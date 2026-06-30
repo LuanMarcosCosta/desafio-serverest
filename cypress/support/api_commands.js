@@ -28,8 +28,8 @@ Cypress.Commands.add('apiCadastrarUsuario', (user) => {
             'Content-Type': 'application/json',
         },
         body: {
-            "nome": 'Fulano Teste - API Cypress',
-            "email": 'fulano_cypress@qa.com.br',
+            "nome": 'Alice schrödinger Stark',
+            "email": 'alice_ss_api@avengers.com.br',
             "password": 'teste',
             "administrador": 'true'
         }
@@ -51,10 +51,10 @@ Cypress.Commands.add('apiCadastrarProduto', (token) => {
             Authorization: token,
         },
         body: {
-            "nome": 'Bordado Superior - API Cypress',
-            "preco": 199,
+            "nome": 'Notebook Dell XPS 13',
+            "preco": 1999,
             "descricao": 'Produto cadastrado via API Cypress',
-            "quantidade": 2,
+            "quantidade": 7,
         }
     }).then((response) => {
         expect(response.status).to.equal(201);
@@ -62,6 +62,44 @@ Cypress.Commands.add('apiCadastrarProduto', (token) => {
         expect(response.body).to.have.property('_id');
         Cypress.env('produtoId', response.body._id);
         return response;
+    });
+});
+
+Cypress.Commands.add('apiDeletarUsuario', (userId, token) => {
+    return cy.request({
+        method: 'DELETE',
+        url: `https://serverest.dev/usuarios/${userId}`,
+        headers: {
+            accept: 'application/json',
+            Authorization: token,
+        },
+        failOnStatusCode: false,
+    }).then((response) => {
+        expect([200, 204]).to.include(response.status);
+        return response;
+    });
+});
+
+Cypress.Commands.add('apiDeletarPeloNome', (userName, token) => {
+    return cy.request({
+        method: 'GET',
+        url: `https://serverest.dev/usuarios?nome=${encodeURIComponent(userName)}`,
+        headers: {
+            accept: 'application/json',
+        },
+    }).then((response) => {
+        expect(response.status).to.equal(200);
+        const users = response.body.usuarios || [];
+        if (users.length === 0) {
+            return [];
+        }
+
+        const results = [];
+        return cy.wrap(users).each((u) => {
+            cy.apiDeletarUsuario(u._id, token).then((res) => {
+                results.push(res);
+            });
+        }).then(() => results);
     });
 });
 
