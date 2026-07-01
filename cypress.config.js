@@ -7,10 +7,6 @@ module.exports = defineConfig({
   watchForFileChanges: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  env: {
-    produtoId: '',
-    token_produto_excluir: '',
-  },
   e2e: {
     setupNodeEvents(on, config) {
     },

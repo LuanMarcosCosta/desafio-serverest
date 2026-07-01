@@ -15,46 +15,46 @@ Cypress.Commands.add('apiLogin', () => {
     }).then((response) => {
         expect(response.status).to.equal(200);
         expect(response.body).to.have.property('authorization');
+        expect(response.body.authorization).to.match(/^Bearer\s+/);
+
         return response;
     });
 });
 
-Cypress.Commands.add('apiCadastrarUsuario', (user) => {
+Cypress.Commands.add('apiCadastrarUsuario', (user = {}) => {
     return cy.request({
         method: 'POST',
         url: 'https://serverest.dev/usuarios',
-        headers: {
-            accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
         body: {
-            "nome": 'Alice schrödinger Stark',
-            "email": 'alice_ss_api@avengers.com.br',
-            "password": 'teste',
-            "administrador": 'true'
+            nome: 'Alice schrödinger Stark',
+            email: `alice_${Date.now()}@qa.com.br`,
+            password: 'teste',
+            administrador: 'true',
+            ...user
         }
     }).then((response) => {
-        expect(response.status).to.equal(201);
-        expect(response.body).to.have.property('message', 'Cadastro realizado com sucesso');
+        expect(response.status).to.eq(201);
+        expect(response.body.message).to.eq('Cadastro realizado com sucesso');
         expect(response.body).to.have.property('_id');
+
         return response;
     });
 });
 
-Cypress.Commands.add('apiCadastrarProduto', (token) => {
+Cypress.Commands.add('apiCadastrarProduto', (token = {}) => {
     return cy.request({
         method: 'POST',
         url: 'https://serverest.dev/produtos',
         headers: {
             accept: 'application/json',
             'Content-Type': 'application/json',
-            Authorization: token,
+             Authorization: token,
         },
         body: {
-            "nome": 'Notebook Dell XPS 13',
-            "preco": 1999,
-            "descricao": 'Produto cadastrado via API Cypress',
-            "quantidade": 7,
+            nome: `Notebook Dell XPS ${Date.now()}`,
+            preco: 1999,
+            descricao: 'Produto cadastrado via API Cypress',
+            quantidade: 7,
         }
     }).then((response) => {
         expect(response.status).to.equal(201);
@@ -80,7 +80,7 @@ Cypress.Commands.add('apiDeletarUsuario', (userId, token) => {
     });
 });
 
-Cypress.Commands.add('apiDeletarPeloNome', (userName, token) => {
+Cypress.Commands.add('apiDeletarUsuarioPeloNome', (userName, token) => {
     return cy.request({
         method: 'GET',
         url: `https://serverest.dev/usuarios?nome=${encodeURIComponent(userName)}`,
