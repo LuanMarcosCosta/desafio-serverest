@@ -4,6 +4,7 @@ describe('Excluir via API — produtos e usuários', () => {
             const token = loginResponse.body.authorization;
 
             cy.apiDeletarUsuarioPeloNome('alice', token).then((results) => {
+                cy.log(`Usuários deletados: ${results.length}`);
             });
         });
     });
