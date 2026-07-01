@@ -7,13 +7,8 @@ module.exports = defineConfig({
   watchForFileChanges: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  env: {
-    produtoId: '',
-    token_produto_excluir: '',
-  },
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
     },
     experimentalModifyObstructiveThirdPartyCode: true,
     baseUrl: 'https://front.serverest.dev/login',
