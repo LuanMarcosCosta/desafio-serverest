@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Use Node.js 18
         uses: actions/setup-node@v5
@@ -19,13 +21,28 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Show workspace files
+        run: |
+          echo "PWD: $(pwd)"
+          ls -la
+          echo "package-lock exists:" 
+          test -f package-lock.json && echo yes || echo no
+          echo "package.json contents:" 
+          sed -n '1,20p' package.json
+
       - name: Print node/npm versions
         run: |
           node --version
           npm --version
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo 'package-lock.json not found, using npm install instead'
+            npm install
+          fi
 
       - name: Run Cypress tests
         run: npm run cypress
