@@ -17,6 +17,12 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 18
+          cache: 'npm'
+
+      - name: Print node/npm versions
+        run: |
+          node --version
+          npm --version
 
       - name: Install dependencies
         run: npm ci
