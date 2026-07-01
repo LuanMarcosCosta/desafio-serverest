@@ -9,51 +9,18 @@ on:
 jobs:
   cypress:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v5
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Show workspace files
-        run: |
-          echo "PWD: $(pwd)"
-          ls -la
-          echo "package-lock exists:" 
-          test -f package-lock.json && echo yes || echo no
-          echo "package.json contents:" 
-          sed -n '1,20p' package.json
-
-      - name: Print node/npm versions
-        run: |
-          node --version
-          npm --version
-
-      - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            echo 'package-lock.json not found, using npm install instead'
-            npm install
-          fi
-
-      - name: Run Cypress tests
-        run: npm run cypress
+      - uses: cypress-io/github-action@v6
+        with:
+          command: npm run cypress
         env:
           CYPRESS_baseUrl: https://front.serverest.dev/login
           CYPRESS_user_email: ${{ secrets.CYPRESS_USER_EMAIL }}
           CYPRESS_user_password: ${{ secrets.CYPRESS_USER_PASSWORD }}
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-results
-          path: cypress/results
