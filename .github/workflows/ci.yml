@@ -9,28 +9,18 @@ on:
 jobs:
   cypress:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v5
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Cypress tests
-        run: npm run cypress
+      - uses: cypress-io/github-action@v6
+        with:
+          command: npm run cypress
         env:
           CYPRESS_baseUrl: https://front.serverest.dev/login
           CYPRESS_user_email: ${{ secrets.CYPRESS_USER_EMAIL }}
           CYPRESS_user_password: ${{ secrets.CYPRESS_USER_PASSWORD }}
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-results
-          path: cypress/results
